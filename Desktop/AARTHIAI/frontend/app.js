@@ -1,9 +1,3 @@
-/* ============================================
-   AarthiAI Landing Page — Main Application
-   Three.js Globe + GSAP Scroll Zoom + Stock Data
-   ============================================ */
-
-// ─── Stock Data ───────────────────────────────────────
 const stocksData = [
     {
         symbol: "RELIANCE",

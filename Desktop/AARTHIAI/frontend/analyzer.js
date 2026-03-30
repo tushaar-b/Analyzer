@@ -1,9 +1,3 @@
-
-/* ============================================================
-   AarthiAI — Analyzer Module
-   Overlay open/close + 3-step form + API call + results render
-   ============================================================ */
-
 const API_URL = "http://localhost:8000/analyze";
 
 let literacyScore = 1;
