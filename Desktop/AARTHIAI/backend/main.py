@@ -30,6 +30,8 @@ class UserProfile(BaseModel):
     bank_distance: str   # <1km | 1-5km | 5-15km | >15km
     first_gen: str       # first_gen | some_exposure | experienced
     emergency_fund: str  # 0-1 | 2-3 | 4-5 | 6+
+    monthly_emi: float = 0.0
+    loan_type: str = "none"  # home | education | personal | credit_card | none
 
 
 @app.post("/analyze")
@@ -40,7 +42,7 @@ def analyze(user: UserProfile):
     surplus = surplus_breakdown["true_surplus"]
 
     allocation = generate_allocation(user_dict, surplus)
-    investment_plan = generate_investment_plan(user_dict, surplus, allocation)
+    investment_plan = generate_investment_plan(user_dict, surplus, allocation, surplus_breakdown)
     equity_score, deductions = compute_equity_score(user_dict, surplus, allocation)
     profile_summary = build_profile_summary(user_dict, surplus, allocation, equity_score)
 

@@ -73,7 +73,9 @@ function collectForm() {
         emergency_fund: document.getElementById("emergency_fund").value,
         literacy_score: literacyScore,
         bank_distance:  document.getElementById("bank_distance").value,
-        first_gen:      document.getElementById("first_gen").value
+        first_gen:      document.getElementById("first_gen").value,
+        monthly_emi:    parseFloat(document.getElementById("monthly_emi").value) || 0,
+        loan_type:      document.getElementById("loan_type").value
     };
 }
 
@@ -127,7 +129,8 @@ const TYPE_COLORS = {
     ipo:              "#ffa726",
     short_term:       "#26c6da",
     long_term_equity: "#8b5cf6",
-    liquid_fund:      "#78909c"
+    liquid_fund:      "#78909c",
+    debt_payoff:      "#dc2626"
 };
 
 function inr(n) {
@@ -179,11 +182,19 @@ function renderResults(data) {
     const wRows = [
         { label: "Raw Monthly Income",           val: sb.raw_income,          cls: "inc" },
         { label: "Cost of Living Adjustment",    val: sb.col_deduction,       cls: "ded" },
+    ];
+    if (sb.emi_deduction > 0) {
+        wRows.push({ label: "Loan / EMI Payment",  val: sb.emi_deduction,  cls: "ded" });
+    }
+    wRows.push(
         { label: "Dependency Load",              val: sb.dep_deduction,       cls: "ded" },
         { label: "Volatility Buffer",            val: sb.vol_deduction,       cls: "ded" },
         { label: "Emergency Fund Gap (monthly)", val: sb.emergency_deduction, cls: "ded" },
-        { label: "True Investable Surplus",      val: sb.true_surplus,        cls: "sur" }
-    ];
+    );
+    if (sb.debt_acceleration_amount) {
+        wRows.push({ label: "Debt Acceleration (50%)", val: sb.debt_acceleration_amount, cls: "ded" });
+    }
+    wRows.push({ label: "True Investable Surplus", val: sb.true_surplus, cls: "sur" });
     document.getElementById("r-waterfall").innerHTML = wRows.map(r => `
         <div class="wrow">
             <span class="wlbl">${r.label}</span>

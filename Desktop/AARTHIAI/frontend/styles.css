@@ -5,40 +5,41 @@
     --bg-card-hover: rgba(255, 255, 255, 0.06);
     --border-subtle: rgba(255, 255, 255, 0.06);
     --border-hover: rgba(255, 255, 255, 0.12);
-    
+
     --text-primary: #f0f0f5;
     --text-secondary: rgba(255, 255, 255, 0.55);
     --text-tertiary: rgba(255, 255, 255, 0.35);
-    
+
     --accent-blue: #4f8cff;
     --accent-purple: #a855f7;
     --accent-cyan: #22d3ee;
     --accent-green: #34d399;
     --accent-red: #f87171;
     --accent-amber: #fbbf24;
-    
+
     --gradient-primary: linear-gradient(135deg, #3d7a2a 0%, #609E45 50%, #4ADE80 100%);
     --gradient-card: linear-gradient(145deg, rgba(96, 158, 69, 0.08) 0%, rgba(74, 222, 128, 0.04) 100%);
     --gradient-glow: radial-gradient(ellipse at center, rgba(96, 158, 69, 0.15) 0%, transparent 70%);
-    
+
     --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 60px rgba(96, 158, 69, 0.04);
     --shadow-card-hover: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 80px rgba(96, 158, 69, 0.08);
-    
+
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 20px;
     --radius-xl: 28px;
-    
+
     --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-display: 'Space Grotesk', 'Inter', sans-serif;
-    
+
     --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* --- Reset & Base --- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -58,7 +59,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- Navigation --- */
 .nav-bar {
     position: fixed;
     top: 0;
@@ -152,10 +152,9 @@ body {
     box-shadow: 0 4px 20px rgba(96, 158, 69, 0.3);
 }
 
-/* --- Hero Section --- */
 .hero {
     position: relative;
-    height: 300vh; /* Extended for scroll animation */
+    height: 300vh;
     background: var(--bg-primary);
     overflow: hidden;
 }
@@ -212,8 +211,17 @@ body {
 }
 
 @keyframes pulse-dot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(1.5); }
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.5);
+    }
 }
 
 .hero-title {
@@ -246,7 +254,6 @@ body {
     margin-bottom: 48px;
 }
 
-/* Scroll Indicator */
 .scroll-indicator {
     display: flex;
     flex-direction: column;
@@ -275,8 +282,17 @@ body {
 }
 
 @keyframes scroll-bounce {
-    0%, 100% { transform: translateY(0); opacity: 1; }
-    50% { transform: translateY(10px); opacity: 0.3; }
+
+    0%,
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(10px);
+        opacity: 0.3;
+    }
 }
 
 .scroll-text {
@@ -320,8 +336,15 @@ body {
 }
 
 @keyframes pulse-pin {
-    0%, 100% { box-shadow: 0 0 20px rgba(79, 140, 255, 0.5); }
-    50% { box-shadow: 0 0 40px rgba(79, 140, 255, 0.8), 0 0 60px rgba(79, 140, 255, 0.3); }
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(79, 140, 255, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(79, 140, 255, 0.8), 0 0 60px rgba(79, 140, 255, 0.3);
+    }
 }
 
 .location-info {
@@ -410,10 +433,12 @@ body {
     z-index: 2;
     pointer-events: none;
 }
+
 .ticker-tape-wrapper::before {
     left: 0;
     background: linear-gradient(to right, rgba(30, 10, 10, 0.95), transparent);
 }
+
 .ticker-tape-wrapper::after {
     right: 0;
     background: linear-gradient(to left, rgba(30, 10, 10, 0.95), transparent);
@@ -432,8 +457,13 @@ body {
 }
 
 @keyframes ticker-scroll {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .ticker-item {
@@ -465,9 +495,11 @@ body {
     font-size: 12px;
     font-variant-numeric: tabular-nums;
 }
+
 .ticker-change.up {
     color: #22c55e;
 }
+
 .ticker-change.down {
     color: #ef4444;
 }
@@ -743,6 +775,7 @@ body {
     position: relative;
     overflow: hidden;
 }
+
 .cta-button::before {
     content: '';
     position: absolute;
@@ -750,55 +783,60 @@ body {
     left: -100%;
     width: 200%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: 0.6s;
 }
+
 .cta-button:hover::before {
     left: 100%;
 }
+
 .cta-button:hover {
     transform: translateY(-3px) scale(1.02);
     box-shadow: 0 8px 32px rgba(96, 158, 69, 0.35);
 }
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
     .nav-bar {
         padding: 16px 24px;
     }
-    
+
     .nav-links {
         display: none;
     }
-    
+
     .stocks-section {
         padding: 80px 20px 60px;
     }
-    
+
     .stocks-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .market-stats {
         flex-direction: column;
         gap: 24px;
         padding: 24px;
     }
-    
+
     .stat-divider {
         width: 48px;
         height: 1px;
     }
-    
+
     .cta-section {
         padding: 80px 24px;
     }
 }
+
 /* --- Animations --- */
 @keyframes fadeInUp {
     from {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -809,15 +847,41 @@ body {
     animation: fadeInUp 0.6s ease-out both;
 }
 
-.stock-card:nth-child(1) { animation-delay: 0.1s; }
-.stock-card:nth-child(2) { animation-delay: 0.15s; }
-.stock-card:nth-child(3) { animation-delay: 0.2s; }
-.stock-card:nth-child(4) { animation-delay: 0.25s; }
-.stock-card:nth-child(5) { animation-delay: 0.3s; }
-.stock-card:nth-child(6) { animation-delay: 0.35s; }
-.stock-card:nth-child(7) { animation-delay: 0.4s; }
-.stock-card:nth-child(8) { animation-delay: 0.45s; }
-.stock-card:nth-child(9) { animation-delay: 0.5s; }
+.stock-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.stock-card:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.stock-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.stock-card:nth-child(4) {
+    animation-delay: 0.25s;
+}
+
+.stock-card:nth-child(5) {
+    animation-delay: 0.3s;
+}
+
+.stock-card:nth-child(6) {
+    animation-delay: 0.35s;
+}
+
+.stock-card:nth-child(7) {
+    animation-delay: 0.4s;
+}
+
+.stock-card:nth-child(8) {
+    animation-delay: 0.45s;
+}
+
+.stock-card:nth-child(9) {
+    animation-delay: 0.5s;
+}
 
 /* Stars / Aurora effect behind globe */
 .globe-container::after {

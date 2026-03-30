@@ -806,6 +806,21 @@
                             <option value="6+">6+ months</option>
                         </select>
                     </div>
+                    <div class="fg">
+                        <label>Do you have any active loan or EMI? (₹/month)</label>
+                        <input type="number" id="monthly_emi" placeholder="e.g. 5000 (enter 0 if none)" min="0"
+                            value="0" />
+                    </div>
+                    <div class="fg">
+                        <label>What type of loan is it?</label>
+                        <select id="loan_type">
+                            <option value="none" selected>No active loan</option>
+                            <option value="home">Home Loan</option>
+                            <option value="education">Education Loan</option>
+                            <option value="personal">Personal Loan</option>
+                            <option value="credit_card">Credit Card Debt</option>
+                        </select>
+                    </div>
                     <div class="btn-row">
                         <button class="btn-prev" onclick="azBack(2)">← Back</button>
                         <button class="btn-fwd" onclick="azNext(2)">Continue →</button>

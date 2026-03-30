@@ -9,6 +9,9 @@ def compute_surplus(user):
     }
     col_deduction = income * col_rates.get(user["city_tier"], 0.18)
 
+    # EMI deduction — applied right after COL
+    emi_deduction = max(0, float(user.get("monthly_emi", 0)))
+
     dep_counts = {
         "0": 0, "1-2": 1.5, "3-4": 3.5, "5+": 5
     }
@@ -28,17 +31,30 @@ def compute_surplus(user):
     emergency_gap_months = max(0, 6 - months_saved)
     emergency_deduction = (emergency_gap_months * income) / 12
 
-    surplus = income - col_deduction - dep_deduction - vol_deduction - emergency_deduction
+    surplus = income - col_deduction - emi_deduction - dep_deduction - vol_deduction - emergency_deduction
     surplus = max(0, round(surplus))
 
-    return {
+    # Debt acceleration for high-interest loans
+    loan_type = user.get("loan_type", "none")
+    debt_acceleration = 0
+    if loan_type in ("credit_card", "personal") and surplus > 0:
+        debt_acceleration = round(surplus * 0.50)
+        surplus = surplus - debt_acceleration
+
+    result = {
         "raw_income": income,
         "col_deduction": round(col_deduction),
+        "emi_deduction": round(emi_deduction),
         "dep_deduction": round(dep_deduction),
         "vol_deduction": round(vol_deduction),
         "emergency_deduction": round(emergency_deduction),
         "true_surplus": surplus
     }
+
+    if debt_acceleration > 0:
+        result["debt_acceleration_amount"] = debt_acceleration
+
+    return result
 
 
 def generate_allocation(user, surplus):
@@ -106,7 +122,7 @@ def generate_allocation(user, surplus):
     return allocation
 
 
-def generate_investment_plan(user, surplus, allocation):
+def generate_investment_plan(user, surplus, allocation, surplus_breakdown=None):
     type_info = {
         "emergency_fund": {
             "label": "Emergency Fund",
@@ -153,6 +169,24 @@ def generate_investment_plan(user, surplus, allocation):
     }
 
     plan = []
+
+    # Insert Debt Payoff card at highest priority if debt acceleration exists
+    debt_accel = 0
+    if surplus_breakdown:
+        debt_accel = surplus_breakdown.get("debt_acceleration_amount", 0)
+    if debt_accel > 0:
+        loan_type = user.get("loan_type", "unknown")
+        loan_label = loan_type.replace("_", " ").title()
+        plan.append({
+            "type": "debt_payoff",
+            "label": f"Debt Payoff — {loan_label}",
+            "percentage": 0,  # not part of allocation %
+            "monthly_amount": debt_accel,
+            "horizon": "Immediate Priority",
+            "instrument": f"Accelerated {loan_label} repayment",
+            "why": f"You carry high-interest {loan_label.lower()} debt. Paying this off first saves you more than most investments would earn."
+        })
+
     for key, pct in allocation.items():
         if pct > 0:
             amount = round((pct / 100) * surplus)
@@ -168,8 +202,11 @@ def generate_investment_plan(user, surplus, allocation):
                     "why": info["why"]
                 })
 
-    plan.sort(key=lambda x: x["percentage"], reverse=True)
-    return plan
+    # Sort investment items by percentage (debt payoff stays at top with pct=0 trick)
+    debt_cards = [p for p in plan if p["type"] == "debt_payoff"]
+    invest_cards = [p for p in plan if p["type"] != "debt_payoff"]
+    invest_cards.sort(key=lambda x: x["percentage"], reverse=True)
+    return debt_cards + invest_cards
 
 
 def compute_equity_score(user, surplus, allocation):
@@ -194,6 +231,13 @@ def compute_equity_score(user, surplus, allocation):
     if user["first_gen"] == "first_gen" and allocation.get("ipo", 0) > 0:
         score -= 10
         deductions.append({"reason": "IPO allocation flagged for first-gen investor — consider removing", "points": -10})
+
+    # High Debt-to-Income penalty
+    monthly_emi = float(user.get("monthly_emi", 0))
+    income = user["income"]
+    if income > 0 and monthly_emi > (income * 0.30):
+        score -= 20
+        deductions.append({"reason": "High Debt-to-Income ratio detected", "points": -20})
 
     return max(0, score), deductions
 
@@ -233,7 +277,14 @@ def build_profile_summary(user, surplus, allocation, equity_score):
         risks.append("Physical banking access constraints may limit investment options")
     if user["first_gen"] == "first_gen":
         risks.append("First-generation investor — extra care needed with complex products")
+    monthly_emi = float(user.get("monthly_emi", 0))
+    if monthly_emi > 0 and income > 0 and monthly_emi > (income * 0.30):
+        risks.append("High Debt-to-Income ratio — EMI exceeds 30% of gross income")
 
+    loan_type = user.get("loan_type", "none")
+    if loan_type in ("credit_card", "personal"):
+        loan_label = loan_type.replace("_", " ").title()
+        actions.append(f"Priority 0: Aggressively pay off {loan_label.lower()} debt before investing")
     if user["emergency_fund"] in ["0-1", "2-3"]:
         actions.append("Priority 1: Build emergency fund to 6 months before aggressive investing")
     if user["pf_status"] == "none":
