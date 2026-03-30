@@ -113,7 +113,6 @@
             margin-bottom: 18px;
         }
 
-        /* steps */
         .az-step {
             display: none;
         }
@@ -149,8 +148,6 @@
             margin-bottom: 20px;
             line-height: 1.5;
         }
-
-        /* form elements – grey translucent glass */
         .fg {
             margin-bottom: 18px;
         }
@@ -195,7 +192,6 @@
             color: #333;
         }
 
-        /* literacy cards */
         .lit-cards {
             display: flex;
             flex-direction: column;
@@ -235,7 +231,6 @@
             margin-top: 3px;
         }
 
-        /* buttons */
         .btn-row {
             display: flex;
             gap: 12px;
@@ -279,7 +274,6 @@
             box-shadow: 0 4px 16px rgba(96, 158, 69, 0.3);
         }
 
-        /* az-loading */
         #az-loading {
             display: none;
             text-align: center;
@@ -304,7 +298,7 @@
             }
         }
 
-        /* results */
+
         #az-results {
             display: none;
         }
@@ -563,7 +557,7 @@
                 <span class="title-line gradient-text">With AI-Powered</span>
                 <span class="title-line">Intelligence</span>
             </h1>
-            <p class="hero-subtitle">Track India's top stocks with real-time insights powered by artificial
+            <p class="hero-subtitle">Track India's top stocks with real time insights powered by artificial
                 intelligence. Know where you stand in the market. Scroll to explore Mumbai's financial heartbeat.</p>
             <div class="scroll-indicator" id="scroll-indicator">
                 <div class="scroll-mouse">
@@ -586,7 +580,6 @@
         <div class="stocks-bg-glow"></div>
         <div class="stocks-container">
             <div class="stocks-header">
-                <!-- Endless scroll ticker tape -->
                 <div class="ticker-tape-wrapper">
                     <div class="ticker-tape">
                         <div class="ticker-track">
@@ -630,7 +623,6 @@
                                     class="ticker-price">14,387.20</span> <span
                                     class="ticker-change up">+1.15%</span></span>
                             <span class="ticker-sep">│</span>
-                            <!-- duplicate for seamless loop -->
                             <span class="ticker-item"><span class="ticker-name">NIFTY 50</span> <span
                                     class="ticker-price">22,456.80</span> <span
                                     class="ticker-change up">+1.24%</span></span>
@@ -703,7 +695,7 @@
     <section id="cta-section" class="cta-section">
         <div class="cta-content">
             <h2 class="cta-title">Ready to start investing?</h2>
-            <p class="cta-subtitle">Get a personalized investment plan built around your actual financial situation —
+            <p class="cta-subtitle">Get a personalized investment plan built around your actual financial situation
                 not generic advice.</p>
             <button class="cta-button" onclick="openAnalyzer(event)">
                 <span>Analyze My Profile</span>
@@ -714,26 +706,23 @@
         </div>
     </section>
 
-    <!-- Analyzer-->
     <div id="analyzer-overlay">
 
         <button class="az-back-btn" onclick="closeAnalyzer()">← Back to Markets</button>
 
         <div class="az-header">
             <h1>AarthiAI</h1>
-            <p>Your personal financial advisor — let's build a plan together</p>
+            <p>Your personal financial advisor, let's build a plan together</p>
         </div>
 
         <div class="az-wrap">
 
-            <!-- welcome banner -->
             <div class="az-welcome">
                 <div class="az-welcome-emoji" style="color: #1a1a2a;">WELCOME</div>
                 <div class="az-welcome-text">We'll ask a few questions about your finances to create a plan that's truly
                     made for you. It only takes 2 minutes.</div>
             </div>
 
-            <!-- onboarding -->
             <div id="az-onboarding">
                 <div class="az-progress">
                     <div class="seg active" id="seg1"></div>
@@ -782,7 +771,7 @@
                     <div class="fg">
                         <label>How many people depend on your income?</label>
                         <select id="dependents">
-                            <option value="0" selected>Just me — no dependents</option>
+                            <option value="0" selected>Just me i.e no dependents</option>
                             <option value="1-2">1–2 people (spouse, child, parent)</option>
                             <option value="3-4">3–4 people</option>
                             <option value="5+">5 or more people</option>
@@ -791,9 +780,9 @@
                     <div class="fg">
                         <label>Do you have a provident fund?</label>
                         <select id="pf_status">
-                            <option value="epf" selected>Yes — EPF (employer deducts it)</option>
-                            <option value="ppf">Yes — PPF (I contribute myself)</option>
-                            <option value="nps">Yes — NPS (National Pension)</option>
+                            <option value="epf" selected>Yes, EPF (employer deducts it)</option>
+                            <option value="ppf">Yes, PPF (I contribute myself)</option>
+                            <option value="nps">Yes, NPS (National Pension)</option>
                             <option value="none">No provident fund right now</option>
                         </select>
                     </div>
@@ -827,7 +816,6 @@
                     </div>
                 </div>
 
-                <!-- step 3 -->
                 <div class="az-step" id="az-step3">
                     <h2>Your investing experience</h2>
                     <p class="az-step-desc">Whether you're brand new or a seasoned investor, we'll match recommendations
@@ -861,9 +849,9 @@
                     <div class="fg">
                         <label>Has your family invested before?</label>
                         <select id="first_gen">
-                            <option value="first_gen" selected>No — I'd be the first in my family to invest</option>
-                            <option value="some_exposure">Somewhat — family has some experience</option>
-                            <option value="experienced">Yes — investing runs in the family</option>
+                            <option value="first_gen" selected>No, I'd be the first in my family to invest</option>
+                            <option value="some_exposure">Somewhat, family has some experience</option>
+                            <option value="experienced">Yes, investing runs in the family</option>
                         </select>
                     </div>
                     <div class="btn-row">
@@ -875,14 +863,12 @@
                 <div class="err-box" id="err-box"></div>
             </div>
 
-            <!-- loading -->
             <div id="az-loading">
                 <div class="loading-spinner"></div>
                 <div>Crunching your numbers…<br><span style="font-size:0.82rem;color:#aaa">Analyzing income, expenses,
                         and best instruments for you</span></div>
             </div>
 
-            <!-- results -->
             <div id="az-results">
 
                 <div class="rcard">
@@ -924,7 +910,6 @@
     </div>
 
 
-    <!-- Scripts: Three.js + GSAP (landing page), then app logic -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>

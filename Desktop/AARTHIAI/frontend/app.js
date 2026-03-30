@@ -1,3 +1,4 @@
+
 const stocksData = [
     {
         symbol: "RELIANCE",
