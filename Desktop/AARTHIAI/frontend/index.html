@@ -12,48 +12,259 @@
         rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
+        /* ═══════════════════════════════════════════════
+           ANALYZER OVERLAY — SPLIT PANEL
+        ═══════════════════════════════════════════════ */
         #analyzer-overlay {
             display: none;
             position: fixed;
             inset: 0;
             background: #ffffff;
             z-index: 2000;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
         #analyzer-overlay.visible {
-            display: block;
+            display: flex;
         }
 
+        /* ── LEFT PANEL — Video ───────────────────────── */
+        .az-left {
+            position: relative;
+            flex: 0 0 48%;
+            min-width: 0;
+            background: #0a0f0a;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: flex 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.4s ease,
+                max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* When results are shown — collapse the left panel */
+        #analyzer-overlay.results-mode .az-left {
+            flex: 0 0 0%;
+            max-width: 0;
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* When results mode — right panel expands full width */
+        #analyzer-overlay.results-mode .az-right {
+            max-width: 780px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* decorative top-left brand mark */
+        .az-left-brand {
+            position: absolute;
+            top: 24px;
+            left: 28px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .az-left-brand .logo-icon {
+            font-size: 18px;
+            background: linear-gradient(135deg, #609E45 0%, #4ADE80 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .az-left-brand .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 17px;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        /* back button lives on the left panel, top-right corner */
         .az-back-btn {
             position: absolute;
             top: 20px;
-            left: 20px;
-            background: none;
-            border: 1px solid #e0e0e0;
-            color: #888;
+            right: 20px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.7);
             padding: 8px 18px;
             border-radius: 50px;
             font-size: 0.82rem;
             cursor: pointer;
             transition: 0.2s;
             font-family: var(--font-primary);
-            z-index: 10;
+            backdrop-filter: blur(8px);
         }
 
         .az-back-btn:hover {
             border-color: #609E45;
-            color: #609E45;
+            color: #fff;
+            background: rgba(96, 158, 69, 0.15);
+        }
+
+        /* video fills the panel */
+        .az-video-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .az-video-wrap video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* gradient overlay at bottom of video for legibility */
+        .az-video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 220px;
+            background: linear-gradient(to top, rgba(10, 15, 10, 0.92) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* tagline over the gradient */
+        .az-left-tagline {
+            position: absolute;
+            bottom: 36px;
+            left: 0;
+            right: 0;
+            padding: 0 32px;
+            z-index: 6;
+        }
+
+        .az-left-tagline h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.25;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        .az-left-tagline h2 span {
+            background: linear-gradient(135deg, #4ADE80 0%, #609E45 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .az-left-tagline p {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.55;
+            max-width: 340px;
+        }
+
+        /* pill badges row */
+        .az-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .az-badge {
+            padding: 5px 13px;
+            border-radius: 50px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border: 1px solid rgba(96, 158, 69, 0.35);
+            color: #4ADE80;
+            background: rgba(96, 158, 69, 0.08);
+        }
+
+        /* ── RIGHT PANEL — Form ───────────────────────── */
+        .az-right {
+            flex: 1;
+            min-width: 0;
+            overflow-y: auto;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .az-header {
             text-align: center;
-            padding: 44px 20px 24px;
+            padding: 44px 20px 20px;
             border-bottom: 1px solid #f0f0f0;
         }
 
+        /* In results mode — header gets a back-to-form button */
+        #az-results-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 28px 0;
+        }
+
+        #analyzer-overlay.results-mode #az-results-header {
+            display: flex;
+        }
+
+        #analyzer-overlay.results-mode .az-header {
+            display: none;
+        }
+
+        .az-results-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .az-results-brand .logo-icon {
+            font-size: 18px;
+            background: linear-gradient(135deg, #609E45 0%, #4ADE80 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .az-results-brand .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 17px;
+            color: #1a1a2a;
+            letter-spacing: -0.02em;
+        }
+
+        .az-results-back-btn {
+            background: #f5f5f5;
+            border: 1px solid #e8e8e8;
+            color: #555;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: var(--font-primary);
+        }
+
+        .az-results-back-btn:hover {
+            border-color: #609E45;
+            color: #609E45;
+            background: rgba(96, 158, 69, 0.05);
+        }
+
         .az-header h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #609E45;
             font-family: var(--font-display);
             letter-spacing: -0.5px;
@@ -62,13 +273,15 @@
         .az-header p {
             color: #888;
             margin-top: 6px;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
         }
 
         .az-wrap {
-            max-width: 680px;
+            max-width: 560px;
+            width: 100%;
             margin: 0 auto;
-            padding: 0 20px 80px;
+            padding: 0 28px 80px;
+            flex: 1;
         }
 
         /* welcome banner */
@@ -148,6 +361,7 @@
             margin-bottom: 20px;
             line-height: 1.5;
         }
+
         .fg {
             margin-bottom: 18px;
         }
@@ -298,9 +512,14 @@
             }
         }
 
-
         #az-results {
             display: none;
+        }
+
+        /* Results animate in when shown */
+        #az-results.visible {
+            display: block;
+            animation: fadeStep 0.4s ease-out;
         }
 
         .rcard {
@@ -531,6 +750,36 @@
             font-size: 0.88rem;
             margin-top: 16px;
         }
+
+        /* ── Responsive: stack on small screens ─────── */
+        @media (max-width: 860px) {
+            #analyzer-overlay.visible {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            .az-left {
+                flex: 0 0 260px;
+                min-height: 260px;
+            }
+
+            /* Hide left panel in results mode on mobile too */
+            #analyzer-overlay.results-mode .az-left {
+                flex: 0 0 0 !important;
+                min-height: 0 !important;
+                max-height: 0;
+                opacity: 0;
+            }
+
+            .az-right {
+                overflow-y: visible;
+            }
+
+            .az-back-btn {
+                top: 12px;
+                right: 12px;
+            }
+        }
     </style>
 </head>
 
@@ -706,208 +955,261 @@
         </div>
     </section>
 
+    <!-- ═══════════════════════════════════════════════
+         ANALYZER OVERLAY — SPLIT LAYOUT
+    ═══════════════════════════════════════════════ -->
     <div id="analyzer-overlay">
 
-        <button class="az-back-btn" onclick="closeAnalyzer()">← Back to Markets</button>
+        <!-- LEFT: Video Panel (hidden when results shown) -->
+        <div class="az-left">
+            <!-- Brand -->
+            <div class="az-left-brand">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">AarthiAI</span>
+            </div>
 
-        <div class="az-header">
-            <h1>AarthiAI</h1>
-            <p>Your personal financial advisor, let's build a plan together</p>
+            <!-- Back button -->
+            <button class="az-back-btn" onclick="closeAnalyzer()">← Back to Markets</button>
+
+            <!-- Video -->
+            <div class="az-video-wrap">
+                <video id="az-promo-video" autoplay muted loop playsinline preload="auto" src="aarthi-promo.mp4">
+                </video>
+            </div>
+
+            <!-- Gradient + tagline overlay -->
+            <div class="az-video-overlay"></div>
+            <div class="az-left-tagline">
+                <h2>Your money,<br><span>working smarter.</span></h2>
+                <p>India's first AI-powered financial advisor built for every income level — from ₹5,000 to ₹5,00,000+
+                </p>
+                <div class="az-badges">
+                    <span class="az-badge">🔒 Private & Secure</span>
+                    <span class="az-badge">⚡ 2-min setup</span>
+                    <span class="az-badge">📊 AI-Powered</span>
+                </div>
+            </div>
         </div>
 
-        <div class="az-wrap">
+        <!-- RIGHT: Form Panel -->
+        <div class="az-right">
 
-            <div class="az-welcome">
-                <div class="az-welcome-emoji" style="color: #1a1a2a;">WELCOME</div>
-                <div class="az-welcome-text">We'll ask a few questions about your finances to create a plan that's truly
-                    made for you. It only takes 2 minutes.</div>
+            <!-- Results-mode top bar (replaces header, has back-to-form button) -->
+            <div id="az-results-header">
+                <div class="az-results-brand">
+                    <span class="logo-icon">◆</span>
+                    <span class="logo-text">AarthiAI</span>
+                </div>
+                <button class="az-results-back-btn" onclick="closeAnalyzer()">← Back to Markets</button>
             </div>
 
-            <div id="az-onboarding">
-                <div class="az-progress">
-                    <div class="seg active" id="seg1"></div>
-                    <div class="seg" id="seg2"></div>
-                    <div class="seg" id="seg3"></div>
-                </div>
-                <div class="az-step-label" id="az-step-label">Step 1 of 3</div>
+            <!-- Normal header (shown during form steps) -->
+            <div class="az-header">
+                <h1>AarthiAI</h1>
+                <p>Your personal financial advisor, let's build a plan together</p>
+            </div>
 
-                <!-- step 1 -->
-                <div class="az-step visible" id="az-step1">
-                    <h2>Let's start with your income</h2>
-                    <p class="az-step-desc">We tailor our advice to every income level, from ₹5,000
-                        to ₹5,00,000+.</p>
-                    <div class="fg">
-                        <label>Your monthly in hand income (₹)</label>
-                        <input type="number" id="income" placeholder="e.g. 25000" min="0" />
-                    </div>
-                    <div class="fg">
-                        <label>Where do you live?</label>
-                        <select id="city_tier">
-                            <option value="metro">Metro City (Mumbai, Delhi, Bengaluru)</option>
-                            <option value="tier1" selected>Tier 1 City (Pune, Ahmedabad, Hyderabad)</option>
-                            <option value="tier2">Tier 2 City (Jaipur, Lucknow, Indore)</option>
-                            <option value="rural">Rural / Semi-urban area</option>
-                        </select>
-                    </div>
-                    <div class="fg">
-                        <label>How do you earn?</label>
-                        <select id="income_type">
-                            <option value="salaried" selected>Salaried (regular paycheck)</option>
-                            <option value="business">Business / Self-employed</option>
-                            <option value="agrarian">Agrarian / Farmer</option>
-                            <option value="seasonal">Seasonal / Freelance worker</option>
-                        </select>
-                    </div>
-                    <div class="btn-row">
-                        <button class="btn-fwd" style="flex:1" onclick="azNext(1)">Continue →</button>
-                    </div>
+            <div class="az-wrap">
+
+                <div class="az-welcome">
+                    <div class="az-welcome-emoji" style="color: #1a1a2a;">WELCOME</div>
+                    <div class="az-welcome-text">We'll ask a few questions about your finances to create a plan that's
+                        truly
+                        made for you. It only takes 2 minutes.</div>
                 </div>
 
-                <!-- step 2 -->
-                <div class="az-step" id="az-step2">
-                    <h2>Your family &amp; safety net</h2>
-                    <p class="az-step-desc">This helps us understand your responsibilities and build a plan that
-                        protects you first, before investing.</p>
-                    <div class="fg">
-                        <label>How many people depend on your income?</label>
-                        <select id="dependents">
-                            <option value="0" selected>Just me i.e no dependents</option>
-                            <option value="1-2">1–2 people (spouse, child, parent)</option>
-                            <option value="3-4">3–4 people</option>
-                            <option value="5+">5 or more people</option>
-                        </select>
+                <div id="az-onboarding">
+                    <div class="az-progress">
+                        <div class="seg active" id="seg1"></div>
+                        <div class="seg" id="seg2"></div>
+                        <div class="seg" id="seg3"></div>
                     </div>
-                    <div class="fg">
-                        <label>Do you have a provident fund?</label>
-                        <select id="pf_status">
-                            <option value="epf" selected>Yes, EPF (employer deducts it)</option>
-                            <option value="ppf">Yes, PPF (I contribute myself)</option>
-                            <option value="nps">Yes, NPS (National Pension)</option>
-                            <option value="none">No provident fund right now</option>
-                        </select>
-                    </div>
-                    <div class="fg">
-                        <label>How many months of expenses do you have saved?</label>
-                        <select id="emergency_fund">
-                            <option value="0-1" selected>Less than 1 month</option>
-                            <option value="2-3">2–3 months</option>
-                            <option value="4-5">4–5 months</option>
-                            <option value="6+">6+ months</option>
-                        </select>
-                    </div>
-                    <div class="fg">
-                        <label>Do you have any active loan or EMI? (₹/month)</label>
-                        <input type="number" id="monthly_emi" placeholder="e.g. 5000 (enter 0 if none)" min="0"
-                            value="0" />
-                    </div>
-                    <div class="fg">
-                        <label>What type of loan is it?</label>
-                        <select id="loan_type">
-                            <option value="none" selected>No active loan</option>
-                            <option value="home">Home Loan</option>
-                            <option value="education">Education Loan</option>
-                            <option value="personal">Personal Loan</option>
-                            <option value="credit_card">Credit Card Debt</option>
-                        </select>
-                    </div>
-                    <div class="btn-row">
-                        <button class="btn-prev" onclick="azBack(2)">← Back</button>
-                        <button class="btn-fwd" onclick="azNext(2)">Continue →</button>
-                    </div>
-                </div>
+                    <div class="az-step-label" id="az-step-label">Step 1 of 3</div>
 
-                <div class="az-step" id="az-step3">
-                    <h2>Your investing experience</h2>
-                    <p class="az-step-desc">Whether you're brand new or a seasoned investor, we'll match recommendations
-                        to your comfort level.</p>
-                    <div class="fg">
-                        <label>How would you describe your investment knowledge?</label>
-                        <div class="lit-cards">
-                            <div class="lit-card selected" data-val="1" onclick="selectLit(1)">
-                                <div class="lt">Beginner</div>
-                                <div class="ld">I've heard of SIP but have never invested</div>
+                    <!-- step 1 -->
+                    <div class="az-step visible" id="az-step1">
+                        <h2>Let's start with your income</h2>
+                        <p class="az-step-desc">We tailor our advice to every income level, from ₹5,000 to ₹5,00,000+.
+                        </p>
+                        <div class="fg">
+                            <label>Your monthly in hand income (₹)</label>
+                            <input type="number" id="income" placeholder="e.g. 25000" min="0" />
+                        </div>
+                        <div class="fg">
+                            <label>Where do you live?</label>
+                            <select id="city_tier">
+                                <option value="metro">Metro City (Mumbai, Delhi, Bengaluru)</option>
+                                <option value="tier1" selected>Tier 1 City (Pune, Ahmedabad, Hyderabad)</option>
+                                <option value="tier2">Tier 2 City (Jaipur, Lucknow, Indore)</option>
+                                <option value="rural">Rural / Semi-urban area</option>
+                            </select>
+                        </div>
+                        <div class="fg">
+                            <label>How do you earn?</label>
+                            <select id="income_type">
+                                <option value="salaried" selected>Salaried (regular paycheck)</option>
+                                <option value="business">Business / Self-employed</option>
+                                <option value="agrarian">Agrarian / Farmer</option>
+                                <option value="seasonal">Seasonal / Freelance worker</option>
+                            </select>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn-fwd" style="flex:1" onclick="azNext(1)">Continue →</button>
+                        </div>
+                    </div>
+
+                    <!-- step 2 -->
+                    <div class="az-step" id="az-step2">
+                        <h2>Your family &amp; safety net</h2>
+                        <p class="az-step-desc">This helps us understand your responsibilities and build a plan that
+                            protects you first, before investing.</p>
+                        <div class="fg">
+                            <label>How many people depend on your income?</label>
+                            <select id="dependents">
+                                <option value="0" selected>Just me i.e no dependents</option>
+                                <option value="1-2">1–2 people (spouse, child, parent)</option>
+                                <option value="3-4">3–4 people</option>
+                                <option value="5+">5 or more people</option>
+                            </select>
+                        </div>
+                        <div class="fg">
+                            <label>Do you have a provident fund?</label>
+                            <select id="pf_status">
+                                <option value="epf" selected>Yes, EPF (employer deducts it)</option>
+                                <option value="ppf">Yes, PPF (I contribute myself)</option>
+                                <option value="nps">Yes, NPS (National Pension)</option>
+                                <option value="none">No provident fund right now</option>
+                            </select>
+                        </div>
+                        <div class="fg">
+                            <label>How many months of expenses do you have saved?</label>
+                            <select id="emergency_fund">
+                                <option value="0-1" selected>Less than 1 month</option>
+                                <option value="2-3">2–3 months</option>
+                                <option value="4-5">4–5 months</option>
+                                <option value="6+">6+ months</option>
+                            </select>
+                        </div>
+                        <div class="fg">
+                            <label>Do you have any active loan or EMI? (₹/month)</label>
+                            <input type="number" id="monthly_emi" placeholder="e.g. 5000 (enter 0 if none)" min="0"
+                                value="0" />
+                        </div>
+                        <div class="fg">
+                            <label>What type of loan is it?</label>
+                            <select id="loan_type">
+                                <option value="none" selected>No active loan</option>
+                                <option value="home">Home Loan</option>
+                                <option value="education">Education Loan</option>
+                                <option value="personal">Personal Loan</option>
+                                <option value="credit_card">Credit Card Debt</option>
+                            </select>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn-prev" onclick="azBack(2)">← Back</button>
+                            <button class="btn-fwd" onclick="azNext(2)">Continue →</button>
+                        </div>
+                    </div>
+
+                    <!-- step 3 -->
+                    <div class="az-step" id="az-step3">
+                        <h2>Your investing experience</h2>
+                        <p class="az-step-desc">Whether you're brand new or a seasoned investor, we'll match
+                            recommendations
+                            to your comfort level.</p>
+                        <div class="fg">
+                            <label>How would you describe your investment knowledge?</label>
+                            <div class="lit-cards">
+                                <div class="lit-card selected" data-val="1" onclick="selectLit(1)">
+                                    <div class="lt">Beginner</div>
+                                    <div class="ld">I've heard of SIP but have never invested</div>
+                                </div>
+                                <div class="lit-card" data-val="2" onclick="selectLit(2)">
+                                    <div class="lt">Intermediate</div>
+                                    <div class="ld">I know about SIP, NAV, and mutual funds</div>
+                                </div>
+                                <div class="lit-card" data-val="3" onclick="selectLit(3)">
+                                    <div class="lt">Advanced</div>
+                                    <div class="ld">I understand RSI, MACD, and pick my own funds</div>
+                                </div>
                             </div>
-                            <div class="lit-card" data-val="2" onclick="selectLit(2)">
-                                <div class="lt">Intermediate</div>
-                                <div class="ld">I know about SIP, NAV, and mutual funds</div>
+                        </div>
+                        <div class="fg" style="margin-top:16px">
+                            <label>How close is your nearest bank or ATM?</label>
+                            <select id="bank_distance">
+                                <option value="<1km" selected>Within walking distance (&lt;1 km)</option>
+                                <option value="1-5km">A short ride away (1–5 km)</option>
+                                <option value="5-15km">Somewhat far (5–15 km)</option>
+                                <option value=">15km">Pretty far (&gt;15 km)</option>
+                            </select>
+                        </div>
+                        <div class="fg">
+                            <label>Has your family invested before?</label>
+                            <select id="first_gen">
+                                <option value="first_gen" selected>No, I'd be the first in my family to invest</option>
+                                <option value="some_exposure">Somewhat, family has some experience</option>
+                                <option value="experienced">Yes, investing runs in the family</option>
+                            </select>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn-prev" onclick="azBack(3)">← Back</button>
+                            <button class="btn-fwd" onclick="submitForm()">Build My Plan →</button>
+                        </div>
+                    </div>
+
+                    <div class="err-box" id="err-box"></div>
+                </div>
+
+                <div id="az-loading">
+                    <div class="loading-spinner"></div>
+                    <div>Crunching your numbers…<br><span style="font-size:0.82rem;color:#aaa">Analyzing income,
+                            expenses,
+                            and best instruments for you</span></div>
+                </div>
+
+                <div id="az-results">
+
+                    <div class="rcard">
+                        <div class="rcard-title">Your Financial Profile</div>
+                        <div class="headline-box">
+                            <div class="headline-text" id="r-headline"></div>
+                            <div class="sub-meta" id="r-submeta"></div>
+                        </div>
+                        <div id="r-strengths"></div>
+                        <div id="r-risks"></div>
+                        <div id="r-actions"></div>
+                        <div class="score-row">
+                            <div class="score-circle">
+                                <div class="score-num" id="r-score"></div>
                             </div>
-                            <div class="lit-card" data-val="3" onclick="selectLit(3)">
-                                <div class="lt">Advanced</div>
-                                <div class="ld">I understand RSI, MACD, and pick my own funds</div>
+                            <div>
+                                <div style="font-size:0.82rem;color:#aaa;font-weight:600;margin-bottom:6px">Equity Score
+                                </div>
+                                <div id="r-deductions"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="fg" style="margin-top:16px">
-                        <label>How close is your nearest bank or ATM?</label>
-                        <select id="bank_distance">
-                            <option value="<1km" selected>Within walking distance (&lt;1 km)</option>
-                            <option value="1-5km">A short ride away (1–5 km)</option>
-                            <option value="5-15km">Somewhat far (5–15 km)</option>
-                            <option value=">15km">Pretty far (&gt;15 km)</option>
-                        </select>
+
+                    <div class="rcard">
+                        <div class="rcard-title">Real Investable Surplus</div>
+                        <div id="r-waterfall"></div>
                     </div>
-                    <div class="fg">
-                        <label>Has your family invested before?</label>
-                        <select id="first_gen">
-                            <option value="first_gen" selected>No, I'd be the first in my family to invest</option>
-                            <option value="some_exposure">Somewhat, family has some experience</option>
-                            <option value="experienced">Yes, investing runs in the family</option>
-                        </select>
+
+                    <div class="rcard">
+                        <div class="rcard-title">Your Investment Plan</div>
+                        <div class="alloc-bar" id="r-allocbar"></div>
+                        <div id="r-plan"></div>
                     </div>
-                    <div class="btn-row">
-                        <button class="btn-prev" onclick="azBack(3)">← Back</button>
-                        <button class="btn-fwd" onclick="submitForm()">Build My Plan →</button>
-                    </div>
+
+                    <button class="btn-reanalyze" onclick="resetAnalyzer()">Re-analyze with Different Profile</button>
                 </div>
 
-                <div class="err-box" id="err-box"></div>
             </div>
-
-            <div id="az-loading">
-                <div class="loading-spinner"></div>
-                <div>Crunching your numbers…<br><span style="font-size:0.82rem;color:#aaa">Analyzing income, expenses,
-                        and best instruments for you</span></div>
-            </div>
-
-            <div id="az-results">
-
-                <div class="rcard">
-                    <div class="rcard-title">Your Financial Profile</div>
-                    <div class="headline-box">
-                        <div class="headline-text" id="r-headline"></div>
-                        <div class="sub-meta" id="r-submeta"></div>
-                    </div>
-                    <div id="r-strengths"></div>
-                    <div id="r-risks"></div>
-                    <div id="r-actions"></div>
-                    <div class="score-row">
-                        <div class="score-circle">
-                            <div class="score-num" id="r-score"></div>
-                        </div>
-                        <div>
-                            <div style="font-size:0.82rem;color:#aaa;font-weight:600;margin-bottom:6px">Equity Score
-                            </div>
-                            <div id="r-deductions"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="rcard">
-                    <div class="rcard-title">Real Investable Surplus</div>
-                    <div id="r-waterfall"></div>
-                </div>
-
-                <div class="rcard">
-                    <div class="rcard-title">Your Investment Plan</div>
-                    <div class="alloc-bar" id="r-allocbar"></div>
-                    <div id="r-plan"></div>
-                </div>
-
-                <button class="btn-reanalyze" onclick="resetAnalyzer()">Re-analyze with Different Profile</button>
-            </div>
-
         </div>
+        <!-- /RIGHT -->
+
     </div>
+    <!-- /analyzer-overlay -->
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -915,6 +1217,78 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="app.js"></script>
     <script src="analyzer.js"></script>
+
+    <script>
+        function openAnalyzer(e) {
+            if (e) e.preventDefault();
+            const overlay = document.getElementById("analyzer-overlay");
+            overlay.classList.add("visible");
+            overlay.classList.remove("results-mode"); // ensure form mode on open
+            document.body.style.overflow = "hidden";
+            resetAnalyzer();
+            const vid = document.getElementById("az-promo-video");
+            if (vid) { vid.currentTime = 0; vid.play().catch(() => { }); }
+        }
+
+        function closeAnalyzer() {
+            const overlay = document.getElementById("analyzer-overlay");
+            overlay.classList.remove("visible");
+            overlay.classList.remove("results-mode");
+            document.body.style.overflow = "";
+        }
+
+        // Hook into the results display — called by analyzer.js when results are ready
+        // We wrap the original showResults logic to also toggle results-mode
+        function enterResultsMode() {
+            const overlay = document.getElementById("analyzer-overlay");
+            overlay.classList.add("results-mode");
+            // Pause and reset the video to free resources
+            const vid = document.getElementById("az-promo-video");
+            if (vid) { vid.pause(); vid.currentTime = 0; }
+            // Scroll the right panel back to top
+            const rightPanel = document.querySelector(".az-right");
+            if (rightPanel) rightPanel.scrollTop = 0;
+        }
+
+        function exitResultsMode() {
+            const overlay = document.getElementById("analyzer-overlay");
+            overlay.classList.remove("results-mode");
+            // Resume video
+            const vid = document.getElementById("az-promo-video");
+            if (vid) { vid.play().catch(() => { }); }
+        }
+
+        // Patch resetAnalyzer to also exit results mode
+        const _originalResetAnalyzer = window.resetAnalyzer;
+        window.resetAnalyzer = function () {
+            exitResultsMode();
+            if (typeof _originalResetAnalyzer === "function") _originalResetAnalyzer();
+        };
+
+        // Patch showResults (from analyzer.js) to enter results mode
+        // We do this after scripts load via a MutationObserver-free approach:
+        // analyzer.js should call window.onResultsReady() or we patch after DOMContentLoaded
+        document.addEventListener("DOMContentLoaded", () => {
+            // Intercept the display of #az-results by observing its style changes
+            const resultsEl = document.getElementById("az-results");
+            if (resultsEl) {
+                const observer = new MutationObserver((mutations) => {
+                    for (const mutation of mutations) {
+                        if (mutation.attributeName === "style" || mutation.attributeName === "class") {
+                            const isVisible =
+                                resultsEl.style.display !== "none" &&
+                                resultsEl.style.display !== "" ||
+                                resultsEl.classList.contains("visible");
+                            if (isVisible) {
+                                enterResultsMode();
+                            }
+                        }
+                    }
+                });
+                observer.observe(resultsEl, { attributes: true });
+            }
+        });
+    </script>
 </body>
 
 </html>
