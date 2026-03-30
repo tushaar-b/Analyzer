@@ -122,11 +122,11 @@ function resetAnalyzer() {
 
 const TYPE_COLORS = {
     emergency_fund:   "#ef5350",
-    sip_mutual_fund:  "#7c6fff",
-    index_fund:       "#4ecca3",
+    sip_mutual_fund:  "#609E45",
+    index_fund:       "#4ADE80",
     ipo:              "#ffa726",
     short_term:       "#26c6da",
-    long_term_equity: "#ab47bc",
+    long_term_equity: "#8b5cf6",
     liquid_fund:      "#78909c"
 };
 

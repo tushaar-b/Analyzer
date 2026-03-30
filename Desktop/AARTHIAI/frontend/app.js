@@ -556,7 +556,7 @@ function initParticles() {
 
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(79, 140, 255, ${p.opacity})`;
+            ctx.fillStyle = `rgba(96, 158, 69, ${p.opacity})`;
             ctx.fill();
 
             // Connect nearby particles
@@ -568,7 +568,7 @@ function initParticles() {
                     ctx.beginPath();
                     ctx.moveTo(p.x, p.y);
                     ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = `rgba(79, 140, 255, ${0.05 * (1 - dist / 150)})`;
+                    ctx.strokeStyle = `rgba(96, 158, 69, ${0.05 * (1 - dist / 150)})`;
                     ctx.lineWidth = 0.5;
                     ctx.stroke();
                 }
@@ -693,11 +693,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentScroll = window.pageYOffset;
         
         if (currentScroll > 100) {
-            nav.style.background = 'rgba(0, 0, 0, 0.8)';
-            nav.style.borderBottomColor = 'rgba(255, 255, 255, 0.08)';
+            nav.style.background = 'rgba(255, 255, 255, 0.92)';
+            nav.style.backdropFilter = 'blur(20px)';
+            nav.style.borderBottomColor = 'rgba(0, 0, 0, 0.06)';
+            nav.querySelectorAll('.nav-link:not(.btn-nav)').forEach(l => l.style.color = '#555');
+            nav.querySelector('.logo-text').style.color = '#1a1a2a';
         } else {
             nav.style.background = 'rgba(0, 0, 0, 0.4)';
+            nav.style.backdropFilter = 'blur(20px)';
             nav.style.borderBottomColor = 'rgba(255, 255, 255, 0.06)';
+            nav.querySelectorAll('.nav-link:not(.btn-nav)').forEach(l => l.style.color = '');
+            nav.querySelector('.logo-text').style.color = '';
         }
         
         lastScroll = currentScroll;
