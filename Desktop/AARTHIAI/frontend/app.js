@@ -235,10 +235,12 @@ function createEarth() {
     clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
     scene.add(clouds);
 
-    // Initial rotation: show Americas/Atlantic facing camera
-    const initialLon = 80; // degrees — higher positive = more Americas visible
-    globe.rotation.y = THREE.MathUtils.degToRad(initialLon);
-    clouds.rotation.y = THREE.MathUtils.degToRad(initialLon);
+    // Initial rotation: start facing Atlantic Ocean (nice starting view for the spin)
+    // Mumbai is at 72.88°E lon, 19.08°N lat.
+    // In Three.js: visible_longitude = -rotation_y_degrees
+    // So we start at rotation.y = 0 (shows 0°/Prime Meridian) and animate to -72.88°
+    globe.rotation.y = THREE.MathUtils.degToRad(0);
+    clouds.rotation.y = THREE.MathUtils.degToRad(0);
 }
 
 // Fallback procedural texture if CDN textures fail
@@ -384,9 +386,24 @@ function initScrollAnimation() {
     // However, observation shows the sign is REVERSED for this texture,
     // so we use positive rotation.
     
-    // From empirical testing, the target that shows India correctly:
-    const targetRotY = THREE.MathUtils.degToRad(-80);  
-    const targetRotX = THREE.MathUtils.degToRad(6);
+    // ── Exact Mumbai coordinates with texture offset correction ──────
+    // Mumbai: lat = 19.076°N, lon = 72.877°E
+    //
+    // The Blue Marble texture used here has a UV offset of ~32° east
+    // (its left edge is at ~-148° lon, not -180°). We measured this
+    // empirically: at rotation.y = -72.877° the globe showed ~40°E
+    // (Arabian Peninsula), meaning the texture center offset is:
+    //   center_offset = visible_lon - (-rotation_y_deg)
+    //   32 ≈ 40 - (-(-72.877)) → offset = -32°
+    //   So: visible_lon = -rotation_y_deg - 32°
+    //   To get visible_lon = 72.877°: rotation_y = -(72.877 + 32) = -104.877°
+    //
+    // For latitude (rotation.x):
+    //   rotation.x = 0 → equator centred
+    //   Negative rotation.x → northern latitudes face camera
+    //   Mumbai 19.076°N → rotation.x = -19.076°
+    const targetRotY = THREE.MathUtils.degToRad(-104.877);
+    const targetRotX = THREE.MathUtils.degToRad(-19.076);
 
     // Main scroll timeline
     const tl = gsap.timeline({
@@ -428,10 +445,10 @@ function initScrollAnimation() {
         ease: 'power2.inOut',
     }, 0.1);
 
-    // Zoom camera in — offset y slightly upward to center India's latitude
+    // Zoom camera in — offset y slightly upward to center Mumbai's latitude (19°N)
     tl.to(camera.position, {
         z: 2.6,
-        y: 0.15,
+        y: -0.5,   // negative y shifts view upward toward northern latitudes
         x: 0,
         duration: 0.7,
         ease: 'power2.inOut',
@@ -513,8 +530,8 @@ function initScrollAnimation() {
 function animate() {
     requestAnimationFrame(animate);
 
-    if (globe && scrollProgress < 0.05) {
-        // Slow auto-rotation only when not scrolling
+    if (globe && scrollProgress < 0.03) {
+        // Slow auto-rotation only when not actively scrolling
         globe.rotation.y += 0.0008;
         clouds.rotation.y += 0.001;
     }

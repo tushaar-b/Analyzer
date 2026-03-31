@@ -895,3 +895,173 @@ body {
     pointer-events: none;
     z-index: 2;
 }
+
+/* Google Translate Widget Customization */
+#google_translate_element {
+    display: flex;
+    align-items: center;
+}
+
+.goog-te-gadget-simple {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 50px !important;
+    padding: 6px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    transition: var(--transition-fast) !important;
+}
+
+.goog-te-gadget-simple:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value {
+    color: var(--text-primary) !important;
+    font-family: var(--font-primary) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value span {
+    color: var(--text-primary) !important;
+    text-decoration: none !important;
+}
+
+.goog-te-gadget-icon {
+    display: none !important;
+}
+
+.goog-te-gadget-simple img {
+    display: none !important;
+}
+
+/* Hide annoying Google top bar */
+body {
+    top: 0 !important;
+}
+
+/* ONLY hide the banner frame. Hiding body > .skiptranslate hides the actual dropdown menu! */
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+#goog-gt-tt {
+    display: none !important;
+}
+
+.goog-text-highlight {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   GOOGLE TRANSLATE — Overrides
+   Add these rules to the BOTTOM of styles.css
+   (they need to come after the base styles so the
+   specificity is high enough to win)
+═══════════════════════════════════════════════════════ */
+
+/* 1. Prevent Google shifting the entire page down */
+body {
+    top: 0 !important;
+    position: static !important;
+}
+
+html body {
+    margin-top: 0 !important;
+}
+
+/* 2. Hide the yellow banner and tooltip frames */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+div#goog-gt-tt {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* 3. Remove the blue highlight Google adds to translated text */
+.goog-text-highlight {
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* 4. Pill container ─────────────────────────────────── */
+#google_translate_element {
+    display: flex;
+    align-items: center;
+}
+
+.goog-te-gadget-simple {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    border-radius: 50px !important;
+    padding: 7px 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+    transition: background 0.2s ease, border-color 0.2s ease !important;
+}
+
+.goog-te-gadget-simple:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 5. Text inside the pill */
+.goog-te-gadget-simple .goog-te-menu-value,
+.goog-te-gadget-simple .goog-te-menu-value>span {
+    color: #ffffff !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    border: none !important;
+    vertical-align: middle !important;
+}
+
+/* 6. Hide Google's icon image */
+.goog-te-gadget-icon,
+.goog-te-gadget-simple img {
+    display: none !important;
+}
+
+/* 7. The dropdown arrow — keep only the last span (▼) */
+.goog-te-menu-value>span:not(:last-child) {
+    display: none !important;
+}
+
+.goog-te-menu-value>span:last-child {
+    margin-left: 5px !important;
+    font-size: 10px !important;
+    opacity: 0.55 !important;
+}
+
+/* 8. When the page is scrolled and the nav turns light,
+      swap the pill colours to match the dark text nav */
+.nav-bar[style*="rgba(255, 255, 255"] .goog-te-gadget-simple {
+    background: rgba(0, 0, 0, 0.06) !important;
+    border-color: rgba(0, 0, 0, 0.14) !important;
+}
+
+.nav-bar[style*="rgba(255, 255, 255"] .goog-te-gadget-simple .goog-te-menu-value,
+.nav-bar[style*="rgba(255, 255, 255"] .goog-te-gadget-simple .goog-te-menu-value>span {
+    color: #1a1a2a !important;
+}
+
+/* 9. Dropdown menu panel */
+.goog-te-menu-frame {
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    overflow: hidden !important;
+}
